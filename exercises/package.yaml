@@ -6,8 +6,6 @@ author:              "Nurlan Alkuatov"
 maintainer:          "nalkuatov@gmail.com"
 copyright:           "2020 Nurlan Alkuatov"
 
-extra-source-files:
-- ChangeLog.md
 
 # Metadata used when publishing your package
 # synopsis:            Short description of your package
