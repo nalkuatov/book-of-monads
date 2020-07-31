@@ -1,0 +1,36 @@
+name:                exercises
+version:             0.1.0.0
+github:              "nalkuatov/exercises"
+license:             BSD3
+author:              "Nurlan Alkuatov"
+maintainer:          "nalkuatov@gmail.com"
+copyright:           "2020 Nurlan Alkuatov"
+
+extra-source-files:
+- ChangeLog.md
+
+# Metadata used when publishing your package
+# synopsis:            Short description of your package
+# category:            Web
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see the README on GitHub at <https://github.com/nalkuatov/book-of-monads#readme>
+
+dependencies:
+- base >= 4.7 && < 5
+
+library:
+  source-dirs: src
+
+tests:
+  exercises-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - exercises
