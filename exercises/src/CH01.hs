@@ -10,6 +10,15 @@ type WithCounter a = Int → (a, Int)
 next ∷ State s a → (a → State s b) → State s b
 f `next` g = (\i → let (x, i) = f i in g x i)
 
+then_ ∷ Maybe a → (a → Maybe b) → Maybe b
+then_ x f =
+  case x of
+    Nothing → Nothing
+    Just x' → f x'
+
+flatten ∷ Maybe (Maybe a) → Maybe a
+flatten oo = then_ oo id
+
 pure ∷ a → WithCounter a
 pure x = (\i → (x, i))
 
