@@ -8,3 +8,13 @@ ap x a = do
   value ← a -- unwrap the value b
   return $ fun value -- apply the function to the value
 
+-- | Exercise 3.2
+fmap_ ∷ Applicative f ⇒ (a → b) -> f a → f b
+fmap_ f x = pure f <*> x
+
+-- | Exercise 3.3
+newtype ZipList a = ZipList { unZipList ∷ [a] }
+
+instance Functor ZipList where
+  fmap f (ZipList xs) = ZipList (map f xs)
+
