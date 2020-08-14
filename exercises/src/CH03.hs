@@ -18,3 +18,18 @@ newtype ZipList a = ZipList { unZipList ∷ [a] }
 instance Functor ZipList where
   fmap f (ZipList xs) = ZipList (map f xs)
 
+
+-- | Exercise 3.4
+nest3 ∷ (a, b, c) → (a, (b, c))
+nest3 (a, b, c) = (a, (b, c))
+
+nest4 ∷ (a, b, c, d) → (a, (b, (c, d)))
+nest4 (a, b, c, d) = (a, (b, (c, d)))
+
+-- Excercise 3.5
+(**) ∷ Applicative f ⇒ f a → f b → f (a, b)
+f ** g = (,) <$> f <*> g
+
+unit ∷ Applicative f ⇒ f ()
+unit = pure ()
+
