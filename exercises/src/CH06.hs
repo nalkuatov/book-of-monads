@@ -8,5 +8,10 @@ instance Functor (State s) where
 
 instance Applicative (State s) where
   pure x = State $ \s -> (x, s)
---  (State f) <*> State x = \s ->
+  State f <*> State x = State $ \s ->
+    let
+     (f', s')  = f s
+     (a,  s'') = x s'
+    in
+      (f' a, s'')
 
