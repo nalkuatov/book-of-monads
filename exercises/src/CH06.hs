@@ -30,3 +30,19 @@ modify f = do
   s <- get
   put $ f s
 
+-- | Experiments on `Reader r a`
+newtype Reader r a =
+  Reader { runReader :: r -> a }
+
+instance Functor (Reader r) where
+  fmap f (Reader x) = Reader $ \r -> f $ x r
+
+instance Applicative (Reader r) where
+  pure x = Reader $ \_ -> x
+  Reader f <*> Reader x =
+    Reader $ \r -> let a = x r in f r a
+
+instance Monad (Reader r) where
+  Reader a >>= f =
+    Reader $ \r ->
+      let mb = f $ a r in runReader mb r
