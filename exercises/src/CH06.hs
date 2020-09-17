@@ -46,3 +46,6 @@ instance Monad (Reader r) where
   Reader a >>= f =
     Reader $ \r ->
       let mb = f $ a r in runReader mb r
+
+newtype Writer w a = Writer { runWriter :: (w, a) }
+
