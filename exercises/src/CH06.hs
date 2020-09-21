@@ -47,5 +47,19 @@ instance Monad (Reader r) where
     Reader $ \r ->
       let mb = f $ a r in runReader mb r
 
-newtype Writer w a = Writer { runWriter :: (w, a) }
+newtype Writer w a =
+  Writer { runWriter :: (w, a) }
+
+instance Functor (Writer w) where
+  fmap f (Writer (w, a)) = Writer (w, f a)
+
+instance Monoid w => Applicative (Writer w) where
+  pure x = Writer (mempty, x)
+  Writer (w1, f) <*> Writer (w2, a) =
+    Writer (w1 <> w2, f a)
+
+instance Monoid w => Monad (Writer w) where
+  Writer (w1, a) >>= f =
+    let Writer (w2, b) = f a
+    in Writer (w1 <> w2, b)
 
