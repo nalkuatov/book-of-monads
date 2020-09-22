@@ -63,3 +63,13 @@ instance Monoid w => Monad (Writer w) where
     let Writer (w2, b) = f a
     in Writer (w1 <> w2, b)
 
+-- | Exercise 6.3
+
+class Contravariant f where
+  contramap :: (a -> b) -> f b -> f a
+
+newtype Returns r a = R (a -> r)
+
+instance Contravariant (Returns r) where
+  contramap f (R g) = R $ g . f
+
