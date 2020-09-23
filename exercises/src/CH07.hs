@@ -1,5 +1,6 @@
 module CH07 where
 
+import Control.Applicative
 import Prelude hiding (Either(..))
 
 -- | Exercise 7.1
@@ -19,4 +20,12 @@ instance Applicative (Either e) where
 instance Monad (Either e) where
   Left e >>= _ = Left e
   Right x >>= f = f x
+
+-- | Exercise 7.2
+
+instance Monoid e => Alternative (Either e) where
+  empty = Left mempty
+  Right a <|> _ = Right a
+  _ <|> Right a = Right a
+  Left e1 <|> Left e2 = Left $ e1 <> e2
 
