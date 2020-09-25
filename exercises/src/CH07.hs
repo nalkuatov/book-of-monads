@@ -29,3 +29,5 @@ instance Monoid e => Alternative (Either e) where
   _ <|> Right a = Right a
   Left e1 <|> Left e2 = Left $ e1 <> e2
 
+-- | Exercise 7.3
+
