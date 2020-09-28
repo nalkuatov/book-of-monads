@@ -31,3 +31,27 @@ instance Monoid e => Alternative (Either e) where
 
 -- | Exercise 7.3
 
+type Person = String
+
+guard :: Alternative m => Bool -> m ()
+guard True  = pure ()
+guard False = empty
+
+people :: [Person]
+people = ["Alejandro", "Elena", "Quique", "John", "Mary", "Tom"]
+
+pcRels :: [(Person, Person)]
+pcRels = [ ("Alejandro", "Quique")
+         , ("Elena", "Quique")
+         , ("John", "Mary")
+         , ("John", "Tom")
+         , ("Mary", "Tim")
+         ]
+
+gpgcRels :: [(Person, Person)]
+gpgcRels = do
+  (grandparent, parent) <- pcRels
+  (parent', child')     <- pcRels
+  guard (parent' == parent)
+  return (grandparent, child')
+
