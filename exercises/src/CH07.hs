@@ -55,3 +55,10 @@ gpgcRels = do
   guard (parent' == parent)
   return (grandparent, child')
 
+siblingRels :: [(Person, Person)]
+siblingRels = do
+  (parent, child)   <- pcRels
+  (parent', child') <- pcRels
+  guard (parent == parent' && child /= child')
+  return (child', child)
+
