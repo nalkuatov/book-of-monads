@@ -2,6 +2,7 @@ module CH07 where
 
 import Control.Applicative
 import Prelude hiding (Either(..))
+import Control.Monad.Logic hiding (guard)
 
 -- | Exercise 7.1
 
@@ -63,4 +64,7 @@ siblingRels = do
   return (child', child)
 
 -- | Exercise 7.4
+
+pyts :: [Integer] -> Logic (Integer, Integer, Integer)
+pyts = undefined
 
