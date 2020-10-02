@@ -65,6 +65,9 @@ siblingRels = do
 
 -- | Exercise 7.4
 
+list :: [a] -> Logic a
+list xs = msum (map return xs)
+
 pyts :: [Integer] -> Logic (Integer, Integer, Integer)
 pyts = undefined
 
