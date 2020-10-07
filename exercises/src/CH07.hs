@@ -65,9 +65,25 @@ siblingRels = do
 
 -- | Exercise 7.4
 
+fairTriples :: [Integer] -> Logic (Integer, Integer, Integer)
+fairTriples ns =
+  list ns >>- \x ->
+  list ns >>- \y ->
+  list ns >>- \z ->
+  return (x, y, z)
+
 list :: [a] -> Logic a
 list xs = msum (map return xs)
 
+sums :: [Integer] -> Logic (Integer, Integer, Integer)
+sums ns = fairTriples ns >>=
+  \(x, y, z) -> do
+    guard (x + y == z)
+    return (x, y, z)
+
 pyts :: [Integer] -> Logic (Integer, Integer, Integer)
-pyts = undefined
+pyts ns = fairTriples ns >>=
+  \(x, y, z) -> do
+    guard (x ^ 2 + y ^ 2 == z ^ 2)
+    return (x, y, z)
 
