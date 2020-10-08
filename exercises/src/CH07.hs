@@ -93,3 +93,19 @@ pyts ns = fairTriples ns >>=
     guard (x ^ 2 + y ^ 2 == z ^ 2)
     return (x, y, z)
 
+-- | Exercise 7.5
+
+class Monad m => MonadError e m | m -> e where
+  throwError :: e -> m a
+  catchError :: m a -> (e -> m a) -> m a
+
+instance MonadError e (Either e) where
+  throwError = Left
+  catchError (Left e) f = f e
+  catchError m _ = m
+
+instance MonadError () Maybe where
+  throwError e = Nothing
+  catchError Nothing f = f ()
+  catchError m _ = m
+

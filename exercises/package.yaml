@@ -18,6 +18,9 @@ description:         Please see the README on GitHub at <https://github.com/nalk
 
 default-extensions:
 - UnicodeSyntax
+- MultiParamTypeClasses
+- FunctionalDependencies
+- FlexibleInstances
 
 dependencies:
 - base >= 4.7 && < 5
