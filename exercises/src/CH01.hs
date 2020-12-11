@@ -1,6 +1,6 @@
 module CH01 where
 
-import Prelude hiding (pure, (++))
+import           Prelude hiding (pure, (++))
 
 data Tree a = Leaf a | Node (Tree a) (Tree a)
 

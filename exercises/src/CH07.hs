@@ -1,8 +1,8 @@
 module CH07 where
 
-import Control.Applicative
-import Prelude hiding (Either(..))
-import Control.Monad.Logic hiding (guard)
+import           Control.Applicative
+import           Control.Monad.Logic hiding (guard)
+import           Prelude             hiding (Either (..))
 
 -- | Exercise 7.1
 
@@ -102,10 +102,10 @@ class Monad m => MonadError e m | m -> e where
 instance MonadError e (Either e) where
   throwError = Left
   catchError (Left e) f = f e
-  catchError m _ = m
+  catchError m _        = m
 
 instance MonadError () Maybe where
   throwError e = Nothing
   catchError Nothing f = f ()
-  catchError m _ = m
+  catchError m _       = m
 
