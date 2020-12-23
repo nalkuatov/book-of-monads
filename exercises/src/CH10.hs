@@ -61,6 +61,11 @@ instance Monad (Reader r) where
   Reader x >>= f =
     Reader $ \r -> ($ r) . unReader . f $ x r
 
+-- Seems like there's no way to implement the function below.
+-- We should figure out the reason soon.
 swap_ :: Monad m => Reader r (m a) -> m (Reader r a)
 swap_ _ = undefined
+
+swap' :: Monad m => m (Reader r a) -> Reader r (m a)
+swap' = undefined
 
