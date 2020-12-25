@@ -69,3 +69,18 @@ swap_ _ = undefined
 
 swap' :: Monad m => m (Reader r a) -> Reader r (m a)
 swap' mra = Reader $ \r -> fmap (($ r) . unReader) mra
+
+-- Exercise 10.2
+
+newtype Listed m a =
+  Listed { unListed :: [m a]
+         }
+
+instance Functor m => Functor (Listed m) where
+  fmap f (Listed xs) = Listed $ fmap (fmap f) xs
+
+instance Applicative m => Applicative (Listed m) where
+  pure x = Listed [pure x]
+  Listed fs <*> Listed xs =
+    Listed $ fmap (<*>) fs <*> xs
+
