@@ -1,6 +1,7 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeOperators       #-}
 {-# LANGUAGE TupleSections       #-}
+{-# LANGUAGE InstanceSigs        #-}
 
 module CH10 where
 
@@ -39,11 +40,15 @@ instance Monoid w => Monad (Writer w) where
   Writer (a, w) >>= f =
     Writer $ fmap (w <>) . unWriter . f $ a
 
--- swap :: Monad m => (Writer w :.: m) a -> (m :.: Writer w) a
--- The signature of `swap` above is equivalent to the one below
--- but requires additional unwrapping using `Compose` constructor
-swap :: (Monad m, Monoid w) => Writer w (m a) -> m (Writer w a)
-swap (Writer (ma, w)) = fmap (Writer . (, w) ) $ ma
+class (Monad m, Monad n) => Swappable m n where
+  swap :: m (n a) -> n (m a)
+
+instance (Monad m, Monoid w) => Swappable (Writer w) m where
+  -- swap :: Monad m => (Writer w :.: m) a -> (m :.: Writer w) a
+  -- The signature of `swap` above is equivalent to the one below
+  -- but requires additional unwrapping using `Compose` constructor
+  swap :: Writer w (m a) -> m (Writer w a)
+  swap (Writer (ma, w)) = fmap (Writer . (, w) ) $ ma
 
 newtype Reader r a =
   Reader { unReader :: r -> a
@@ -62,13 +67,15 @@ instance Monad (Reader r) where
   Reader x >>= f =
     Reader $ \r -> ($ r) . unReader . f $ x r
 
+instance Monad m => Swappable m (Reader r) where
+  swap :: Monad m => m (Reader r a) -> Reader r (m a)
+  swap mra = Reader $ \r -> fmap (($ r) . unReader) mra
+
 -- Seems like there's no way to implement the function below.
 -- We should figure out the reason soon.
-swap_ :: Monad m => Reader r (m a) -> m (Reader r a)
-swap_ _ = undefined
-
-swap' :: Monad m => m (Reader r a) -> Reader r (m a)
-swap' mra = Reader $ \r -> fmap (($ r) . unReader) mra
+instance Monad m => Swappable (Reader r) m where
+  swap :: Monad m => Reader r (m a) -> m (Reader r a)
+  swap _ = undefined
 
 -- Exercise 10.2
 
