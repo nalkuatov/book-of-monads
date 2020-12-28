@@ -9,6 +9,8 @@ default-extensions:
 dependencies:
 - base >= 4.7 && < 5
 - stm
+- mtl
+- transformers
 - logict
 
 library:

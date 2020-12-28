@@ -1,11 +1,11 @@
-{-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE TypeOperators       #-}
-{-# LANGUAGE TupleSections       #-}
 {-# LANGUAGE InstanceSigs        #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE TupleSections       #-}
+{-# LANGUAGE TypeOperators       #-}
 
 module CH10 where
 
-import           Control.Applicative    (Alternative (..), liftA2)
+import           Control.Applicative (Alternative (..), liftA2)
 
 newtype (f :.: g) a = Compose (f (g a))
 
