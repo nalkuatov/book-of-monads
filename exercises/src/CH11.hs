@@ -8,7 +8,8 @@ type Name = String
 data Expr
   = Literal Integer
   | Var Name
-  | Op Op Expr Expr
+  | Operation Op Expr Expr -- ^ Change the constructor name from `Op` (as written in the book) to `Operation` to
+    -- avoid the confusion with the `Op` data type below
 
 data Op
   = Add
