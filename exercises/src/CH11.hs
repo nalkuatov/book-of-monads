@@ -40,3 +40,5 @@ eval =
           if y == 0 then MaybeT $ pure Nothing
           else pure $ x `div` y
 
+withStateMaybe :: (b -> Maybe a) -> MaybeT (State b) a
+withStateMaybe f = MaybeT $ gets f
