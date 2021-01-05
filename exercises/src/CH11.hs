@@ -23,22 +23,19 @@ type Assignment = [(Name, Integer)]
 
 -- Exercise 11.1
 eval :: Expr -> MaybeT (State Assignment) Integer
-eval =
-  \case
-    Literal n -> pure n
-    Var  name -> MaybeT $ do
-      assignment <- get
-      pure $ lookup name assignment
-    Operation op first second -> do
-      x <- eval first
-      y <- eval second
-      case op of
-        Add      -> pure $ x + y
-        Subtract -> pure $ x - y
-        Multiply -> pure $ x * y
-        Divide   ->
-          if y == 0 then MaybeT $ pure Nothing
-          else pure $ x `div` y
+eval (Literal n) = pure n
+eval (Var name) = withStateMaybe $ lookup name
+eval (Operation op x y) = do
+  x' <- eval x
+  y' <- eval y
+  case op of
+    Add      -> pure $ x' + y'
+    Subtract -> pure $ x' - y'
+    Multiply -> pure $ x' * y'
+    Divide   -> withStateMaybe $ const $
+      if (y' /= 0)
+        then Just $ div x' y'
+        else Nothing
 
 withStateMaybe :: (b -> Maybe a) -> MaybeT (State b) a
-withStateMaybe f = MaybeT $ gets f
+withStateMaybe = MaybeT . gets
