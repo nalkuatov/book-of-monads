@@ -1,9 +1,13 @@
-{-# LANGUAGE LambdaCase #-}
+{-# OPTIONS_GHC -fno-warn-orphans #-}
+
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE LambdaCase        #-}
 
 module CH11 where
 
+import           Control.Monad.Reader      (Reader)
 import           Control.Monad.State
-import           Control.Monad.Trans.Maybe
+import           Control.Monad.Trans.Maybe (MaybeT (..))
 
 type Name = String
 
@@ -39,3 +43,9 @@ eval (Operation op x y) = do
 
 withStateMaybe :: (b -> Maybe a) -> MaybeT (State b) a
 withStateMaybe = MaybeT . gets
+
+-- Exercise 11.2
+instance {-# Overlaps #-} Monad (MaybeT (Reader r)) where
+  return         = undefined
+  MaybeT _ >>= _ = undefined
+
