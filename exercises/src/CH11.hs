@@ -5,9 +5,11 @@
 
 module CH11 where
 
-import           Control.Monad.Reader      (Reader)
+import           Control.Monad.Reader
 import           Control.Monad.State
-import           Control.Monad.Trans.Maybe (MaybeT (..))
+import           Control.Monad.Trans.Except
+import           Control.Monad.Trans.Maybe
+import           System.IO                  (IO)
 
 type Name = String
 
@@ -46,6 +48,30 @@ withStateMaybe = MaybeT . gets
 
 -- Exercise 11.2
 instance {-# Overlaps #-} Monad (MaybeT (Reader r)) where
-  return         = undefined
-  MaybeT _ >>= _ = undefined
+  return = pure
+  MaybeT rma >>= f = MaybeT $ do
+    ma <- rma
+    case ma of
+      Just a  -> runMaybeT $ f a
+      Nothing -> return $ Nothing
+
+instance {-# Overlaps #-} Monad (ExceptT e (Reader r)) where
+  return = pure
+  ExceptT rma >>= f = ExceptT $ do
+    ma <- rma
+    case ma of
+      Left  e -> return $ Left e
+      Right v -> runExceptT $ f v
+
+instance {-# Overlaps #-} Monad (StateT s Maybe) where
+  return = pure
+  StateT smas >>= f = StateT $ \s -> do
+    (a, s') <- smas s
+    runStateT (f a) s'
+
+instance {-# Overlaps #-} Monad (ReaderT r IO) where
+  return a = ReaderT $ \_ -> pure a
+  ReaderT rma >>= f = ReaderT $ \r -> do
+    a <- rma r
+    runReaderT (f a) r
 
