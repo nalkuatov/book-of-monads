@@ -5,10 +5,12 @@
 
 module CH11 where
 
+import           Control.Monad.Cont
 import           Control.Monad.Reader
 import           Control.Monad.State
 import           Control.Monad.Trans.Except
 import           Control.Monad.Trans.Maybe
+import           Control.Monad.Writer
 import           System.IO                  (IO)
 
 type Name = String
@@ -74,4 +76,14 @@ instance {-# Overlaps #-} Monad (ReaderT r IO) where
   ReaderT rma >>= f = ReaderT $ \r -> do
     a <- rma r
     runReaderT (f a) r
+
+instance {-# Overlaps #-} Monoid w => Monad (WriterT w IO) where
+  return a = WriterT $ pure (a, mempty)
+  WriterT maw >>= f = WriterT $ do
+    (a, w)  <- maw
+    (b, w') <- runWriterT (f a)
+    pure $ (b, w <> w')
+
+instance {-# Overlaps #-} Monad (ContT r IO) where
+  return a = ContT ($ a)
 
