@@ -86,4 +86,6 @@ instance {-# Overlaps #-} Monoid w => Monad (WriterT w IO) where
 
 instance {-# Overlaps #-} Monad (ContT r IO) where
   return a = ContT ($ a)
+  (ContT amrmr) >>= f =
+     ContT $ \bmr -> amrmr $ flip (runContT . f) bmr
 
