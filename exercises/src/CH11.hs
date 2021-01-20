@@ -6,6 +6,7 @@
 module CH11 where
 
 import           Control.Monad.Cont
+import           Control.Monad.Identity
 import           Control.Monad.Reader
 import           Control.Monad.State
 import           Control.Monad.Trans.Except
@@ -88,4 +89,11 @@ instance {-# Overlaps #-} Monad (ContT r IO) where
   return a = ContT ($ a)
   (ContT amrmr) >>= f =
      ContT $ \bmr -> amrmr $ flip (runContT . f) bmr
+
+-- | Exercise 11.3
+toIdentity :: a -> Identity a
+toIdentity = Identity
+
+fromIdentity :: Identity a -> a
+fromIdentity (Identity a) = a
 
