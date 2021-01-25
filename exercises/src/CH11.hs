@@ -97,3 +97,6 @@ toIdentity = Identity
 fromIdentity :: Identity a -> a
 fromIdentity (Identity a) = a
 
+-- | Exercise 11.5
+exercise = undefined
+
