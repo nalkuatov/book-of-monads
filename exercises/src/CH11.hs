@@ -98,5 +98,11 @@ fromIdentity :: Identity a -> a
 fromIdentity (Identity a) = a
 
 -- | Exercise 11.5
-exercise = undefined
+type Parser a = StateT String [] a
+
+satisfies :: (Char -> Bool) -> Parser Char
+satisfies = undefined
+
+char :: Char -> Parser Char
+char c = undefined
 
