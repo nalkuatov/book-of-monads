@@ -101,16 +101,16 @@ fromIdentity (Identity a) = a
 type Parser a = StateT String [] a
 
 satisfies :: (Char -> Bool) -> Parser Char
-satisfies f = undefined
+satisfies f = StateT go where
+  go (x:xs) = do
+    guard $ f x
+    pure (x, xs)
+  go [] = []
 
 char :: Char -> Parser Char
-char c =
-  let
-    go (x:xs) =
-      if x == c
-      then go xs
-      else [(x, x:xs)]
-    go []     = []
-  in
-    StateT go
+char c = StateT go where
+  go (x:xs)
+    | c == x = [(c, xs)]
+    | otherwise = []
+  go [] = []
 
