@@ -6,6 +6,8 @@ import Control.Monad.Identity
 
 --
 -- | Exercise 12.1
-class Monad m => MonadMn m where
-  op :: forall a. m a
+class Monad m => MonadReader' r m | m -> r where
+  ask'   :: m r
+  reader :: (r -> a) -> m a
+  reader f = f <$> ask'
 
