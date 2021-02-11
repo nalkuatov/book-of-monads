@@ -11,3 +11,6 @@ class Monad m => MonadReader' r m | m -> r where
   reader :: (r -> a) -> m a
   reader f = f <$> ask'
 
+class (Monoid w, Monad m) => MonadWriter' w m | m -> w where
+  tell :: w -> m ()
+
