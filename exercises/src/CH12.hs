@@ -14,3 +14,7 @@ class Monad m => MonadReader' r m | m -> r where
 class (Monoid w, Monad m) => MonadWriter' w m | m -> w where
   tell :: w -> m ()
 
+class Monad m => MonadError' e m | m -> e where
+  throwError' :: e -> m a
+  catchError' :: m a -> (e -> m a) -> m a
+
