@@ -25,3 +25,6 @@ instance Monad m => MonadReader' r (ReaderT r m) where
 instance (MonadWriter' w m) => MonadWriter' w (ReaderT r m) where
   tell' = ReaderT . const . tell'
 
+-- One more instance for MonadError' should be here.
+-- I am skipping this for now.
+
