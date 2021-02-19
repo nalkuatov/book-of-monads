@@ -5,6 +5,7 @@ module CH12 where
 
 import           Control.Monad.Identity
 import           Control.Monad.Reader
+import           Control.Monad.ST
 
 -- | Exercise 12.1
 class Monad m => MonadReader' r m | m -> r where
@@ -27,4 +28,18 @@ instance (MonadWriter' w m) => MonadWriter' w (ReaderT r m) where
 
 -- One more instance for MonadError' should be here.
 -- I am skipping this for now.
+
+-- | Exercise 12.2
+class (Monad b, Monad m) => MonadBase b m | m -> b where
+  liftBase :: b a -> m a
+
+instance MonadBase IO IO where
+  liftBase = id
+
+instance MonadBase (ST s) (ST s) where
+  liftBase = id
+
+instance (Monad (t m), MonadBase b m, MonadTrans t)
+       => MonadBase b (t m) where
+  liftBase = lift . liftBase
 
