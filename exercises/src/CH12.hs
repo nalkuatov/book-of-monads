@@ -6,6 +6,7 @@ module CH12 where
 import           Control.Monad.Identity
 import           Control.Monad.Reader
 import           Control.Monad.ST
+import           System.IO
 
 -- | Exercise 12.1
 class Monad m => MonadReader' r m | m -> r where
@@ -42,4 +43,8 @@ instance MonadBase (ST s) (ST s) where
 instance (Monad (t m), MonadBase b m, MonadTrans t)
        => MonadBase b (t m) where
   liftBase = lift . liftBase
+
+-- | Exercise 12.3
+withFile :: FilePath -> IOMode -> (Handle -> IO r) -> IO r
+withFile = undefined
 
