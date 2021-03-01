@@ -12,6 +12,8 @@ dependencies:
 - mtl
 - transformers
 - logict
+- unliftio
+- unliftio-core
 
 library:
   source-dirs: src

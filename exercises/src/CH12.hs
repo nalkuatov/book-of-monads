@@ -3,6 +3,7 @@
 
 module CH12 where
 
+import           Control.Monad.IO.Unlift
 import           Control.Monad.Identity
 import           Control.Monad.Reader
 import           Control.Monad.ST
@@ -45,6 +46,6 @@ instance (Monad (t m), MonadBase b m, MonadTrans t)
   liftBase = lift . liftBase
 
 -- | Exercise 12.3
-withFile :: FilePath -> IOMode -> (Handle -> IO r) -> IO r
-withFile = undefined
+withFile' :: (MonadUnliftIO m) => FilePath -> IOMode -> (Handle -> m r) -> m r
+withFile' path mode f = undefined
 
