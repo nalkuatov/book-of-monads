@@ -46,6 +46,8 @@ instance (Monad (t m), MonadBase b m, MonadTrans t)
   liftBase = lift . liftBase
 
 -- | Exercise 12.3
-withFile' :: (MonadUnliftIO m) => FilePath -> IOMode -> (Handle -> m r) -> m r
-withFile' path mode f = undefined
+withFile' :: (MonadUnliftIO m)
+          => FilePath -> IOMode -> (Handle -> m r) -> m r
+withFile' path mode f =
+  withRunInIO $ \run -> withFile path mode (run . f)
 
