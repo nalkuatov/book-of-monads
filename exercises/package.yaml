@@ -1,7 +1,6 @@
 name:                exercises
 
 default-extensions:
-- UnicodeSyntax
 - MultiParamTypeClasses
 - FunctionalDependencies
 - FlexibleInstances
