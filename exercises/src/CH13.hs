@@ -4,3 +4,5 @@ module CH13 where
 -- It represents a position in the 3x3 board used to play tic-tac-toe.
 data Position = Position
 
+-- | Exercise 13.2
+
