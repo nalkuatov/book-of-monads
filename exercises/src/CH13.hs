@@ -21,7 +21,7 @@ data Result
   | GameEnded { winner :: Player }
 
 -- | Exercise 13.2
--- An fictional game shown in a cinematic film
+-- A fictional game shown in a cinematic film
 -- about John Nash ("Beautiful Mind").
 
 -- | Exercise 13.3
