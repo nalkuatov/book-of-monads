@@ -59,3 +59,5 @@ instance TicTacToe (State Board) where
         modify \board -> insert p X board
         pure NextTurn
 
+-- | Exercise 13.4
+
