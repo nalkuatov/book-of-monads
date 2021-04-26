@@ -1,6 +1,11 @@
 module Experiments where
 
-import Control.Monad
+import           Prelude                hiding (take)
+
+import           CH13
+import           Control.Monad
+import           Control.Monad.Identity
+import           Control.Monad.State
 
 failList :: [Int]
 failList = do
@@ -15,4 +20,17 @@ ignore :: IO ()
 ignore =
   void_ $
   forM ["computers", "are", "the", "root", "of", "evil"] print
+
+play :: (Monad m, TicTacToe m) => m (Maybe Player)
+play = do
+  take $ Position One One
+  take $ Position One Two
+  take $ Position One Three
+  info $ Position One Two
+
+start :: Maybe Player
+start =
+  let (Identity t) =
+        runStateT (play :: State (Player, Board) (Maybe Player)) (X, emptyBoard)
+  in fst t
 

@@ -5,7 +5,7 @@
 module CH13 where
 
 import           Control.Monad.State
-import           Data.Map            (Map, insert, lookup)
+import           Data.Map            (Map, insert, lookup, empty)
 import           Prelude             hiding (lookup, take)
 
 -- | Exercise 13.1: Complete the @Position@ data type below.
@@ -25,6 +25,7 @@ data Result
   = AlreadyTaken { by :: Player }
   | NextTurn
   | GameEnded { winner :: Player }
+  deriving (Eq, Show)
 
 -- | Exercise 13.2
 -- A fictional game shown in a cinematic film
@@ -47,16 +48,21 @@ class TicTacToe m where
 
 type Board = Map Position Player
 
-instance TicTacToe (State Board) where
-  info p = do
-    board <- get
-    pure $ lookup p board
-  take p = do
-    player <- info p
+emptyBoard = empty
+
+instance TicTacToe (State (Player, Board)) where
+  info pos = do
+    (_, board) <- get
+    pure $ lookup pos board
+  take pos = do
+    player <- info pos
     case player of
       Just v  -> pure $ AlreadyTaken v
       Nothing -> do
-        modify \board -> insert p X board
+        let next X = O
+            next O = X
+        modify \(p, board) ->
+          (next p, insert pos p board)
         pure NextTurn
 
 -- | Exercise 13.4
