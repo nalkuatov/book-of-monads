@@ -5,7 +5,8 @@
 module CH13 where
 
 import           Control.Monad.State
-import           Data.Map            (Map, insert, lookup, empty)
+import           Data.Map            (Map)
+import qualified Data.Map as Map
 import           Prelude             hiding (lookup, take)
 
 -- | Exercise 13.1: Complete the @Position@ data type below.
@@ -48,22 +49,36 @@ class TicTacToe m where
 
 type Board = Map Position Player
 
-emptyBoard = empty
+emptyBoard = Map.empty
 
-instance TicTacToe (State (Player, Board)) where
+instance TicTacToe (StateT (Player, Board) IO) where
   info pos = do
-    (_, board) <- get
-    pure $ lookup pos board
+    board <- gets snd
+    pure $ Map.lookup pos board
+
+  -- | We should actually implement a way to find the winner
   take pos = do
     player <- info pos
     case player of
-      Just v  -> pure $ AlreadyTaken v
+      Just v  -> do
+        liftIO $ print $ "already taken by: " <> show v
+        pure $ AlreadyTaken v
       Nothing -> do
         let next X = O
             next O = X
+        before <- gets fst
         modify \(p, board) ->
-          (next p, insert pos p board)
-        pure NextTurn
+          (next p, Map.insert pos p board)
+        (after, board) <- get
+        case Map.size board of
+          9 -> do
+            liftIO $ print $ "game ended"
+            pure $ GameEnded after
+          _ -> do
+            liftIO $ print $ "player " <> show before <> " made a move"
+            liftIO $ print board
+            liftIO $ print $ "second move is for: " <> show after
+            pure NextTurn
 
 -- | Exercise 13.4
 

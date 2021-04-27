@@ -28,9 +28,8 @@ play = do
   take $ Position One Three
   info $ Position One Two
 
-start :: Maybe Player
-start =
-  let (Identity t) =
-        runStateT (play :: State (Player, Board) (Maybe Player)) (X, emptyBoard)
-  in fst t
+start :: IO ()
+start = do
+  _ <- runStateT (play :: StateT (Player, Board) IO (Maybe Player)) (X, emptyBoard)
+  pure ()
 
