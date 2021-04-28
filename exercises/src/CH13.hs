@@ -33,6 +33,13 @@ data Result
 -- about John Nash ("Beautiful Mind").
 
 -- | Exercise 13.3
+data Attempt
+  = Match { _word :: String }
+  | Mismatch deriving (Eq, Show)
+
+class Beauty where
+  attempt :: String -> m Attempt
+
 takeIfNotTaken
   :: (Monad m, TicTacToe m)
   => Position
