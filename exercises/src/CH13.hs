@@ -88,4 +88,5 @@ instance TicTacToe (StateT (Player, Board) IO) where
             pure NextTurn
 
 -- | Exercise 13.4
+data MockFilesystem = Map FilePath String
 
