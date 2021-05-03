@@ -90,7 +90,9 @@ instance TicTacToe (StateT (Player, Board) IO) where
 -- | Exercise 13.4
 data MockFilesystem = Map FilePath String
 
+type FSError = String
+
 class FS m where
-  writeFile :: FilePath -> String -> m (Either String ())
-  readFile  :: FilePath -> m (Either String String)
+  writeFile :: FilePath -> String -> m (Either FSError ())
+  readFile  :: FilePath -> m (Either FSError String)
 
