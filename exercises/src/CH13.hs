@@ -96,3 +96,5 @@ class FS m where
   writeFile :: FilePath -> String -> m (Either FSError ())
   readFile  :: FilePath -> m (Either FSError String)
 
+instance FS IO where
+
