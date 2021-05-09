@@ -5,8 +5,10 @@
 module CH13 where
 
 import           Control.Monad.State
+import Control.Exception
 import           Data.Map            (Map)
 import qualified Data.Map as Map
+import qualified System.IO as System.IO
 import           Prelude             hiding (lookup, take)
 
 -- | Exercise 13.1: Complete the @Position@ data type below.
@@ -88,13 +90,31 @@ instance TicTacToe (StateT (Player, Board) IO) where
             pure NextTurn
 
 -- | Exercise 13.4
-data MockFilesystem = Map FilePath String
+type MockFilesystem = Map FilePath String
 
 type FSError = String
+
+instance Exception FSError
 
 class FS m where
   writeFile :: FilePath -> String -> m (Either FSError ())
   readFile  :: FilePath -> m (Either FSError String)
 
+instance FS (State MockFilesystem) where
+  writeFile path content = do
+    map <- get
+    modify $ Map.insert path content
+    pure   $ Right ()
+  readFile path = do
+    file <- gets $ Map.lookup path
+    pure $ case file of
+      Just v  -> Right v
+      Nothing -> Left $ "couldn't find file" <> path
+
 instance FS IO where
+  writeFile path content =
+    (Right <$> System.IO.writeFile path content)
+      `catch` \e -> pure $ Left e
+  readFile file = (Right <$> System.IO.readFile file)
+      `catch` \e -> pure $ Left e
 
