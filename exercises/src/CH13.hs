@@ -118,3 +118,10 @@ instance FS IO where
   readFile file = (Right <$> System.IO.readFile file)
       `catch` \e -> pure $ Left e
 
+-- | Exercise 13.5
+from :: (() -> a) -> a
+from = ($ ())
+
+to :: a -> (() -> a)
+to a = \_ -> a
+
