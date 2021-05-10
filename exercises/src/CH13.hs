@@ -125,3 +125,18 @@ from = ($ ())
 to :: a -> (() -> a)
 to a = \_ -> a
 
+-- | Exercise 13.6
+data Tictactoe a
+  = Info Position (Maybe Player -> Tictactoe a)
+  | Take Position (Result       -> Tictactoe a)
+  | Done a
+
+instance Functor Tictactoe where
+  fmap f (Done a)     = Done $ f a
+  fmap f (Info pos g) = Info pos (fmap f . g)
+  fmap f (Take pos g) = Take pos (fmap f . g)
+
+instance Applicative Tictactoe where
+  pure _  = undefined
+  f <*> g = undefined
+
