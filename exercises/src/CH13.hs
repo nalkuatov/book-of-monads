@@ -137,6 +137,6 @@ instance Functor Tictactoe where
   fmap f (Take pos g) = Take pos (fmap f . g)
 
 instance Applicative Tictactoe where
-  pure _  = undefined
+  pure    = Done
   f <*> g = undefined
 
