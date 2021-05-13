@@ -138,5 +138,7 @@ instance Functor Tictactoe where
 
 instance Applicative Tictactoe where
   pure    = Done
-  f <*> g = undefined
+  Done f     <*> g = fmap f g
+  Info pos f <*> g = Info pos $ (<*> g) . f
+  Take pos f <*> g = Take pos $ (<*> g) . f
 
