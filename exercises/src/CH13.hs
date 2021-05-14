@@ -142,3 +142,25 @@ instance Applicative Tictactoe where
   Info pos f <*> g = Info pos $ (<*> g) . f
   Take pos f <*> g = Take pos $ (<*> g) . f
 
+instance Monad Tictactoe where
+  return = pure
+  Info pos a >>= f =
+    Info pos (\p -> a p >>= f)
+  Take pos a >>= f =
+    Take pos (\p -> a p >>= f)
+
+info' :: Position -> Tictactoe (Maybe Player)
+info' p = Info p return
+
+take' :: Position -> Tictactoe Result
+take' p = Take p return
+
+takeIfNotTaken'
+  :: Position
+  -> Tictactoe (Maybe Result)
+takeIfNotTaken' pos = do
+  p <- info' pos
+  case p of
+    Just _  -> pure Nothing
+    Nothing -> Just <$> take' pos
+
