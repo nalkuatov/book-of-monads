@@ -164,3 +164,26 @@ takeIfNotTaken' pos = do
     Just _  -> pure Nothing
     Nothing -> Just <$> take' pos
 
+-- | Exercise 13.8
+data Fs a
+  = WriteFile FilePath String (Either FSError () -> Fs a)
+  | ReadFile  FilePath (Either FSError String    -> Fs a)
+  | FSDone a
+
+writeFile' :: FilePath -> String -> Fs (Either FSError ())
+writeFile' path content = WriteFile path content FSDone
+
+readFile' :: FilePath -> Fs (Either FSError String)
+readFile' path = ReadFile path FSDone
+
+interpret :: Fs a -> State MockFilesystem a
+interpret (FSDone a) = pure a
+interpret (WriteFile path content f) = do
+  modify $ Map.insert path content
+  interpret $ f $ Right ()
+interpret (ReadFile path f) = do
+  content <- Map.lookup path <$> get
+  interpret $ f $ case content of
+    Just v  -> Right v
+    Nothing -> Left "not found"
+
