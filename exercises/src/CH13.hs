@@ -4,12 +4,12 @@
 
 module CH13 where
 
+import           Control.Exception
 import           Control.Monad.State
-import Control.Exception
 import           Data.Map            (Map)
-import qualified Data.Map as Map
-import qualified System.IO as System.IO
+import qualified Data.Map            as Map
 import           Prelude             hiding (lookup, take)
+import qualified System.IO           as System.IO
 
 -- | Exercise 13.1: Complete the @Position@ data type below.
 -- It represents a position in the 3x3 board used to play tic-tac-toe.
@@ -186,4 +186,13 @@ interpret (ReadFile path f) = do
   interpret $ f $ case content of
     Just v  -> Right v
     Nothing -> Left "not found"
+
+-- | Exercise 13.9
+data TictactoeF r
+  = InfoF Position (Maybe Player -> r)
+  | TakeF Position (Result       -> r)
+
+instance Functor TictactoeF where
+  fmap f (InfoF pos a) = InfoF pos $ f . a
+  fmap f (TakeF pos a) = TakeF pos $ f . a
 
