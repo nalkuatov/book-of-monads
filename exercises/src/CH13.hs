@@ -196,3 +196,11 @@ instance Functor TictactoeF where
   fmap f (InfoF pos a) = InfoF pos $ f . a
   fmap f (TakeF pos a) = TakeF pos $ f . a
 
+-- | Exercise 13.10
+data Free f a = Free (f (Free f a))
+              | Pure a
+
+{-
+  fmap f (Free (Info p k))
+-}
+
