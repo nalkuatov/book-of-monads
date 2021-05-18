@@ -200,7 +200,12 @@ instance Functor TictactoeF where
 data Free f a = Free (f (Free f a))
               | Pure a
 
+instance Functor (Free TictactoeF) where
+  fmap f (Free (InfoF p k)) =
+    Free (InfoF p $ fmap f . k)
+
 {-
-  fmap f (Free (Info p k))
+    fmap f (Free (InfoF p k))
+=== Free (InfoF p $ fmap f . k)
 -}
 
