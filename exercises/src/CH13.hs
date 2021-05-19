@@ -201,6 +201,8 @@ data Free f a = Free (f (Free f a))
               | Pure a
 
 instance Functor (Free TictactoeF) where
+  fmap f (Free (TakeF p k)) =
+    Free (TakeF p $ fmap f . k)
   fmap f (Free (InfoF p k)) =
     Free (InfoF p $ fmap f . k)
 
