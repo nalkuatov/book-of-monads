@@ -211,3 +211,5 @@ instance Functor (Free TictactoeF) where
 === Free (InfoF p $ fmap f . k)
 -}
 
+-- | Exercise 13.11
+
