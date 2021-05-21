@@ -209,6 +209,8 @@ instance Functor (Free TictactoeF) where
 {-
     fmap f (Free (InfoF p k))
 === Free (InfoF p $ fmap f . k)
+--  Move fmap outside of Info constructor via another fmap
+=== fmap f (Free (Info p k)) = Free $ fmap (fmap f) (Info p k)
 -}
 
 -- | Exercise 13.11
