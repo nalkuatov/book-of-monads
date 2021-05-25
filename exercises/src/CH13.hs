@@ -211,6 +211,8 @@ instance Functor (Free TictactoeF) where
 === Free (InfoF p $ fmap f . k)
 --  Move fmap outside of Info constructor via another fmap
 === fmap f (Free (Info p k)) = Free $ fmap (fmap f) (Info p k)
+--  Abstract Info into a variable
+=== fmap f (Free x) = Free $ fmap (fmap f) x
 -}
 
 -- | Exercise 13.11
