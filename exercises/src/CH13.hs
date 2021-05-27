@@ -144,10 +144,9 @@ instance Applicative Tictactoe where
 
 instance Monad Tictactoe where
   return = pure
-  Info pos a >>= f =
-    Info pos (\p -> a p >>= f)
-  Take pos a >>= f =
-    Take pos (\p -> a p >>= f)
+  Done a     >>= f = f a
+  Info pos a >>= f = Info pos (\p -> a p >>= f)
+  Take pos a >>= f = Take pos (\p -> a p >>= f)
 
 info' :: Position -> Tictactoe (Maybe Player)
 info' p = Info p return
@@ -207,8 +206,7 @@ instance Functor (Free TictactoeF) where
     Free (InfoF p $ fmap f . k)
 
 {-
-    fmap f (Free (InfoF p k))
-=== Free (InfoF p $ fmap f . k)
+    fmap f (Free (Info p k)) = Free (Info p $ fmap f k)
 --  Move fmap outside of Info constructor via another fmap
 === fmap f (Free (Info p k)) = Free $ fmap (fmap f) (Info p k)
 --  Abstract Info into a variable
