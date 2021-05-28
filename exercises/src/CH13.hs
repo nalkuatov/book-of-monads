@@ -214,4 +214,15 @@ instance Functor (Free TictactoeF) where
 -}
 
 -- | Exercise 13.11
+data FSF a
+  = WriteFileF FilePath String (Either FSError () -> a)
+  | ReadFileF  FilePath (Either FSError String -> a)
+
+interpret' :: Free FSF a -> State MockFilesystem a
+interpret' (Pure x) = pure x
+interpret' (Free (ReadFileF path f)) = do
+  content <- Map.lookup path <$> get
+  interpret' $ f $ case content of
+    Just v  -> Right v
+    Nothing -> Left "not found"
 
