@@ -205,6 +205,16 @@ instance Functor (Free TictactoeF) where
   fmap f (Free (InfoF p k)) =
     Free (InfoF p $ fmap f . k)
 
+instance Applicative (Free TictactoeF) where
+  pure = Pure
+  Pure f <*> x = f <$> x
+  Free f <*> x = Free (fmap (<*> x) f)
+
+instance Monad (Free TictactoeF) where
+  return = pure
+  Pure a >>= f = f a
+  Free a >>= f = Free (fmap (>>= f) a)
+
 {-
     fmap f (Free (Info p k)) = Free (Info p $ fmap f k)
 --  Move fmap outside of Info constructor via another fmap
