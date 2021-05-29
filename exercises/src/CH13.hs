@@ -240,8 +240,12 @@ interpret' (WriteFileF path content f) = do
 liftF :: Functor f => f a -> Free f a
 liftF = Free . fmap return
 
-foldFree :: (forall r. f r -> m r) -> Free f a -> m a
-foldFree f (Pure x) = undefined
+foldFree :: Monad m => (forall r. f r -> m r) -> Free f a -> m a
+foldFree _ (Pure x) = return x
+foldFree interpret (Free x) = do
+  x' <- interpret x
+  foldFree interpret x'
 
-runFS = undefined
+runFS :: Free FSF a -> State MockFilesystem a
+runFS = foldFree interpret'
 
