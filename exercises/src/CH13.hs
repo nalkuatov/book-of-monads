@@ -1,5 +1,6 @@
 {-# LANGUAGE BlockArguments       #-}
 {-# LANGUAGE FlexibleInstances    #-}
+{-# LANGUAGE RankNTypes           #-}
 {-# LANGUAGE TypeSynonymInstances #-}
 
 module CH13 where
@@ -199,18 +200,16 @@ instance Functor TictactoeF where
 data Free f a = Free (f (Free f a))
               | Pure a
 
-instance Functor (Free TictactoeF) where
-  fmap f (Free (TakeF p k)) =
-    Free (TakeF p $ fmap f . k)
-  fmap f (Free (InfoF p k)) =
-    Free (InfoF p $ fmap f . k)
+instance Functor f => Functor (Free f) where
+  fmap f (Pure x) = Pure $ f x
+  fmap f (Free x) = Free $ fmap (fmap f) x
 
-instance Applicative (Free TictactoeF) where
+instance Functor f => Applicative (Free f) where
   pure = Pure
   Pure f <*> x = f <$> x
   Free f <*> x = Free (fmap (<*> x) f)
 
-instance Monad (Free TictactoeF) where
+instance Functor f => Monad (Free f) where
   return = pure
   Pure a >>= f = f a
   Free a >>= f = Free (fmap (>>= f) a)
@@ -228,11 +227,21 @@ data FSF a
   = WriteFileF FilePath String (Either FSError () -> a)
   | ReadFileF  FilePath (Either FSError String -> a)
 
-interpret' :: Free FSF a -> State MockFilesystem a
-interpret' (Pure x) = pure x
-interpret' (Free (ReadFileF path f)) = do
+interpret' :: FSF a -> State MockFilesystem a
+interpret' (ReadFileF path f) = do
   content <- Map.lookup path <$> get
-  interpret' $ f $ case content of
+  pure $ f $ case content of
     Just v  -> Right v
     Nothing -> Left "not found"
+interpret' (WriteFileF path content f) = do
+  modify $ Map.insert path content
+  pure $ f $ Right ()
+
+liftF :: Functor f => f a -> Free f a
+liftF = Free . fmap return
+
+foldFree :: (forall r. f r -> m r) -> Free f a -> m a
+foldFree f (Pure x) = undefined
+
+runFS = undefined
 
