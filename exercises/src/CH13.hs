@@ -1,5 +1,6 @@
 {-# LANGUAGE BlockArguments       #-}
 {-# LANGUAGE FlexibleInstances    #-}
+{-# LANGUAGE GADTs                #-}
 {-# LANGUAGE RankNTypes           #-}
 {-# LANGUAGE TypeSynonymInstances #-}
 
@@ -248,4 +249,22 @@ foldFree interpret (Free x) = do
 
 runFS :: Free FSF a -> State MockFilesystem a
 runFS = foldFree interpret'
+
+-- | Exercise 13.12
+data TictactoeOp a where
+  InfoOp :: Position -> TictactoeOp (Maybe Player)
+  TakeOp :: Position -> TictactoeOp Result
+  Return :: a        -> TictactoeOp a
+  Bind   :: TictactoeOp a -> (a -> TictactoeOp b) -> TictactoeOp b
+
+instance Functor TictactoeOp where
+  fmap f a = a `Bind` (Return . f)
+
+instance Applicative TictactoeOp where
+  pure    = Return
+  f <*> a = f `Bind` (\f' -> a `Bind` (Return . f'))
+
+instance Monad TictactoeOp where
+  return = Return
+  (>>=) = Bind
 
