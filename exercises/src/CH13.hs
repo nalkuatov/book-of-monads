@@ -266,5 +266,12 @@ instance Applicative TictactoeOp where
 
 instance Monad TictactoeOp where
   return = Return
-  (>>=) = Bind
+  (>>=)  = Bind
+
+-- | Exercise 13.13
+data FSOp a where
+  ReadFileOp  :: FilePath -> FSOp (Either FSError String)
+  WriteFileOp :: FilePath -> String -> FSOp (Either FSError ())
+  Return'     :: a        -> FSOp a
+  Bind'       :: FSOp a   -> (a -> FSOp b) -> FSOp b
 
