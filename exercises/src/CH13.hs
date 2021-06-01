@@ -275,3 +275,20 @@ data FSOp a where
   Return'     :: a        -> FSOp a
   Bind'       :: FSOp a   -> (a -> FSOp b) -> FSOp b
 
+-- | Exercise 13.14
+data Program instr a where
+  PDone  :: a               -> Program instr a
+  PBind  :: Program instr a -> (a -> Program instr b) -> Program instr b
+  Instr  :: instr a         -> Program instr a
+
+instance Functor (Program instr) where
+  fmap f a = a `PBind` (PDone . f)
+
+instance Applicative (Program instr) where
+  pure = PDone
+  f <*> a = f `PBind` (\f' -> a `PBind` (PDone . f'))
+
+instance Monad (Program instr) where
+  return = PDone
+  (>>=)  = PBind
+
