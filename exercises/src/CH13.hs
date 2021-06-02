@@ -292,3 +292,17 @@ instance Monad (Program instr) where
   return = PDone
   (>>=)  = PBind
 
+-- | Exercise 13.15
+data Freer instr a where
+  Pure'  :: a -> Freer instr a
+  Impure :: instr a -> (a -> Freer instr b) -> Freer instr b
+
+instance Functor (Freer instr) where
+  fmap f (Pure' a) = Pure' $ f a
+  fmap f (Impure instr f') =
+    Impure instr ((f <$>) . f')
+
+instance Applicative (Freer instr) where
+  pure  = Pure'
+  (<*>) = undefined
+
