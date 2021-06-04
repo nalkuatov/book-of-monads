@@ -304,5 +304,15 @@ instance Functor (Freer instr) where
 
 instance Applicative (Freer instr) where
   pure  = Pure'
-  (<*>) = undefined
+  Pure' f <*> Pure' x = Pure' $ f x
+  Pure' f <*> Impure instr g =
+    Impure instr (fmap f . g)
+  Impure instr f <*> x =
+    Impure instr ((<*> x) . f)
+
+instance Monad (Freer instr) where
+  return = pure
+  Pure' a        >>= f = f a
+  Impure instr a >>= f =
+    Impure instr (a >=> f)
 
