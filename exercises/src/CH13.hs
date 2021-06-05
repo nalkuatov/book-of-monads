@@ -316,3 +316,8 @@ instance Monad (Freer instr) where
   Impure instr a >>= f =
     Impure instr (a >=> f)
 
+-- Exercise 13.16
+twoToThree :: Freer instr a -> Program instr a
+twoToThree (Pure' a)        = PDone a
+twoToThree (Impure instr k) = PBind (Instr instr) (twoToThree . k)
+
