@@ -1,6 +1,7 @@
 {-# LANGUAGE BlockArguments       #-}
 {-# LANGUAGE FlexibleInstances    #-}
 {-# LANGUAGE GADTs                #-}
+{-# LANGUAGE LambdaCase           #-}
 {-# LANGUAGE RankNTypes           #-}
 {-# LANGUAGE TypeSynonymInstances #-}
 
@@ -320,4 +321,14 @@ instance Monad (Freer instr) where
 twoToThree :: Freer instr a -> Program instr a
 twoToThree (Pure' a)        = PDone a
 twoToThree (Impure instr k) = PBind (Instr instr) (twoToThree . k)
+
+threeToTwo :: Program instr a -> Freer instr a
+threeToTwo (PDone a)     = Pure' a
+threeToTwo (Instr instr) = Impure instr return
+threeToTwo (PBind x k)   = undefined
+  where
+    step = \case
+      PDone a     -> Pure' a
+      Instr instr -> Impure instr return
+
 
