@@ -323,12 +323,11 @@ twoToThree (Pure' a)        = PDone a
 twoToThree (Impure instr k) = PBind (Instr instr) (twoToThree . k)
 
 threeToTwo :: Program instr a -> Freer instr a
-threeToTwo (PDone a)     = Pure' a
-threeToTwo (Instr instr) = Impure instr return
-threeToTwo (PBind x k)   = undefined
-  where
-    step = \case
-      PDone a     -> Pure' a
-      Instr instr -> Impure instr return
-
+threeToTwo (PDone a)               = Pure' a
+threeToTwo (Instr instr)           = Impure instr return
+threeToTwo (PBind (PDone a) k)     = threeToTwo $ k a
+threeToTwo (PBind (Instr instr) k) = Impure instr $ threeToTwo . k
+threeToTwo (PBind (PBind x k) k')  =
+  threeToTwo $ x `PBind` (k >=> k') -- or threeToTwo   x >>= threeToTwo . (k >=> k')
+                                    -- or threeToTwo $ x >>= (k >=> k')
 
