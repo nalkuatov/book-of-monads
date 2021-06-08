@@ -354,3 +354,17 @@ eval (Number v: r) = push v >> eval r
 eval (Plus: r)     = ((+) <$> pop <*> pop) >> eval r
 eval (Times: r)    = ((*) <$> pop <*> pop) >> eval r
 
+interpret_ :: StackF a -> State [Integer] a
+interpret_ (Pop f)    = do
+  values <- get
+  case values of
+    (a: v) -> put v >> pure (f a)
+    []     -> error "empty"
+interpret_ (Push v r) = modify (v :) >> pure r
+
+rpnInterpreter :: Stack a -> State [Integer] a
+rpnInterpreter = foldFree interpret_
+
+runRPN :: [RPNInstruction] -> Integer
+runRPN = ($ []) . evalState . rpnInterpreter . eval
+

@@ -33,3 +33,5 @@ start = do
   _ <- runStateT (play :: StateT (Player, Board) IO (Maybe Player)) (X, emptyBoard)
   pure ()
 
+testRPN = runRPN [Number 3, Number 5, Times]
+
