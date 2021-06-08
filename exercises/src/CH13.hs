@@ -1,4 +1,5 @@
 {-# LANGUAGE BlockArguments       #-}
+{-# LANGUAGE DeriveFunctor        #-}
 {-# LANGUAGE FlexibleInstances    #-}
 {-# LANGUAGE GADTs                #-}
 {-# LANGUAGE LambdaCase           #-}
@@ -330,4 +331,26 @@ threeToTwo (PBind (Instr instr) k) = Impure instr $ threeToTwo . k
 threeToTwo (PBind (PBind x k) k')  =
   threeToTwo $ x `PBind` (k >=> k') -- or threeToTwo   x >>= threeToTwo . (k >=> k')
                                     -- or threeToTwo $ x >>= (k >=> k')
+
+-- | Exercise 13.17
+data StackF r
+  = Pop (Integer -> r)
+  | Push Integer r
+  deriving Functor
+
+type Stack = Free StackF
+
+pop :: Stack Integer
+pop = liftF $ Pop id
+
+push :: Integer -> Stack ()
+push v = liftF $ Push v ()
+
+data RPNInstruction = Number Integer | Plus | Times
+
+eval :: [RPNInstruction] -> Stack Integer
+eval []            = pop
+eval (Number v: r) = push v >> eval r
+eval (Plus: r)     = ((+) <$> pop <*> pop) >> eval r
+eval (Times: r)    = ((*) <$> pop <*> pop) >> eval r
 
