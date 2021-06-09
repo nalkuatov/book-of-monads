@@ -351,8 +351,8 @@ data RPNInstruction = Number Integer | Plus | Times
 eval :: [RPNInstruction] -> Stack Integer
 eval []            = pop
 eval (Number v: r) = push v >> eval r
-eval (Plus: r)     = ((+) <$> pop <*> pop) >> eval r
-eval (Times: r)    = ((*) <$> pop <*> pop) >> eval r
+eval (Plus: r)     = ((+) <$> pop <*> pop) >>= push >> eval r
+eval (Times: r)    = ((*) <$> pop <*> pop) >>= push >> eval r
 
 interpret_ :: StackF a -> State [Integer] a
 interpret_ (Pop f)    = do
