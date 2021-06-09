@@ -368,3 +368,25 @@ rpnInterpreter = foldFree interpret_
 runRPN :: [RPNInstruction] -> Integer
 runRPN = ($ []) . evalState . rpnInterpreter . eval
 
+-- | Exercise 13.18
+data StackI a where
+  Push' :: Integer -> StackI ()
+  Pop'  :: StackI Integer
+
+type Stack' = Freer StackI
+
+pop' :: Stack' Integer
+pop' = Impure Pop' return
+
+push' :: Integer -> Stack' ()
+push' v = Impure (Push' v) return
+
+rpnInterpreter' :: Stack' a -> State [Integer] a
+rpnInterpreter' (Pure' a)            = pure a
+rpnInterpreter' (Impure (Push' v) f) = modify (v :) >> rpnInterpreter' (f ())
+rpnInterpreter' (Impure Pop' f)      = do
+  values <- get
+  case values of
+    (a: v) -> put v >> rpnInterpreter' (f a)
+    _      -> error "empty"
+
