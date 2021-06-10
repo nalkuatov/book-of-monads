@@ -369,6 +369,9 @@ runRPN :: [RPNInstruction] -> Integer
 runRPN = ($ []) . evalState . rpnInterpreter . eval
 
 -- | Exercise 13.18
+-- It's actually not possible to implement optimize here,
+-- since we cannot pattern match on a binding function of
+-- @Impure@
 data StackI a where
   Push' :: Integer -> StackI ()
   Pop'  :: StackI Integer
