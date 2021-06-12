@@ -393,3 +393,22 @@ rpnInterpreter' (Impure Pop' f)      = do
     (a: v) -> put v >> rpnInterpreter' (f a)
     _      -> error "empty"
 
+-- | Exercise 13.19
+newtype WithContext c m a = WithContext { unC :: c -> m (a, c) }
+
+data LastOp = LastPush Integer | LastPop | LastReturn
+
+instance Monad m => Functor (WithContext LastOp m) where
+  fmap f (WithContext unc) =
+    WithContext $ \c -> do
+      (a, c') <- unc c
+      pure (f a, c')
+
+instance Monad m => Applicative (WithContext LastOp m) where
+  pure a = WithContext $ \_ -> pure (a, LastReturn)
+  WithContext f <*> WithContext unc =
+    WithContext $ \c -> do
+      (f', c') <- f c
+      (a, c'') <- unc c'
+      pure $ (f' a, c'')
+
