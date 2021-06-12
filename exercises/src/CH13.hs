@@ -4,6 +4,7 @@
 {-# LANGUAGE GADTs                #-}
 {-# LANGUAGE LambdaCase           #-}
 {-# LANGUAGE RankNTypes           #-}
+{-# LANGUAGE TupleSections        #-}
 {-# LANGUAGE TypeSynonymInstances #-}
 
 module CH13 where
@@ -394,6 +395,14 @@ rpnInterpreter' (Impure Pop' f)      = do
     _      -> error "empty"
 
 -- | Exercise 13.19
+class Monad m => MonadStack m where
+  _pop  :: m Integer
+  _push :: Integer -> m ()
+
+instance MonadStack Stack' where
+  _pop = pop'
+  _push = push'
+
 newtype WithContext c m a = WithContext { unC :: c -> m (a, c) }
 
 data LastOp = LastPush Integer | LastPop | LastReturn
@@ -411,4 +420,15 @@ instance Monad m => Applicative (WithContext LastOp m) where
       (f', c') <- f c
       (a, c'') <- unc c'
       pure $ (f' a, c'')
+
+instance Monad m => Monad (WithContext LastOp m) where
+  return = pure
+  WithContext unc >>= f = WithContext $ \c -> do
+    (a, c')   <- unc c
+    unC (f a) c'
+
+instance (Monad m, MonadStack m) => MonadStack (WithContext LastOp m) where
+  _push v = WithContext $ \c -> (, LastPush v) <$> _push v
+  _pop    = WithContext $ \case (LastPush v) -> pure (v, LastReturn)
+                                LastPop      -> (, LastPop) <$> _pop
 
