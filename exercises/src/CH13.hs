@@ -432,3 +432,6 @@ instance (Monad m, MonadStack m) => MonadStack (WithContext LastOp m) where
   _pop    = WithContext $ \case (LastPush v) -> pure (v, LastReturn)
                                 LastPop      -> (, LastPop) <$> _pop
 
+optimize :: (Monad m, MonadStack m) => WithContext LastOp m a -> m a
+optimize = (fst <$>) . ($ LastReturn) . unC
+
