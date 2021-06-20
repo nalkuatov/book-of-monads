@@ -1,8 +1,12 @@
+{-# LANGUAGE GADTs #-}
+
 module Experiments where
 
 import           Prelude                hiding (take)
 
-import           CH13
+import           CH13                   (Board (..), Player (..), Position (..),
+                                         TicTacToe, Tr (..), emptyBoard, info,
+                                         take, runRPN)
 import           Control.Monad
 import           Control.Monad.Identity
 import           Control.Monad.State
@@ -34,4 +38,13 @@ start = do
   pure ()
 
 testRPN = runRPN [Number 3, Number 5, Times]
+
+-- | Chapter 13, free applicatives
+
+data Ap f a where
+  Pure :: a   -> Ap f a
+  Ap   :: f a -> Ap f (a -> b) -> Ap f b
+
+instance Functor (Ap f) where
+  fmap f (Pure a) = Pure $ f a
 
