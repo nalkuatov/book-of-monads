@@ -5,8 +5,9 @@ module Experiments where
 import           Prelude                hiding (take)
 
 import           CH13                   (Board (..), Player (..), Position (..),
-                                         TicTacToe, Tr (..), emptyBoard, info,
-                                         take, runRPN)
+                                         RPNInstruction (..), TicTacToe,
+                                         Tr (..), emptyBoard, info, runRPN,
+                                         take)
 import           Control.Monad
 import           Control.Monad.Identity
 import           Control.Monad.State
@@ -47,4 +48,10 @@ data Ap f a where
 
 instance Functor (Ap f) where
   fmap f (Pure a) = Pure $ f a
+  fmap f (Ap a b) = Ap a $ (fmap (f .) b)
+
+instance Functor f => Applicative (Ap f) where
+  pure = Pure
+  Pure f <*> a = fmap f a
+  Ap a b <*> c = Ap a $ (flip <$> b <*> c) -- ^ can't get why this is correct
 
