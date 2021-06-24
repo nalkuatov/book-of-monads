@@ -1,4 +1,5 @@
-{-# LANGUAGE GADTs #-}
+{-# LANGUAGE DeriveFunctor #-}
+{-# LANGUAGE GADTs         #-}
 
 module Experiments where
 
@@ -54,4 +55,17 @@ instance Functor f => Applicative (Ap f) where
   pure = Pure
   Pure f <*> a = fmap f a
   Ap a b <*> c = Ap a $ (flip <$> b <*> c) -- ^ can't get why this is correct
+
+data Arg a
+  = Flag String   (Bool -> a)
+  | Option String (Maybe String -> a)
+  deriving Functor
+
+type CommandLine = Ap Arg
+
+flag :: String -> CommandLine Bool
+flag a = Ap (Flag a id) (Pure id)
+
+option :: String -> CommandLine (Maybe String)
+option a = Ap (Option a id) (Pure id)
 
