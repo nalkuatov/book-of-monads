@@ -45,7 +45,7 @@ testRPN = runRPN [Number 3, Number 5, Times]
 
 data Ap f a where
   Pure :: a   -> Ap f a
-  Ap   :: f a -> Ap f (a -> b) -> Ap f b
+  Ap   :: f c -> Ap f (c -> b) -> Ap f b
 
 instance Functor (Ap f) where
   fmap f (Pure a) = Pure $ f a
@@ -53,8 +53,10 @@ instance Functor (Ap f) where
 
 instance Functor f => Applicative (Ap f) where
   pure = Pure
-  Pure f <*> a = fmap f a
-  Ap a b <*> c = Ap a $ (flip <$> b <*> c) -- ^ can't get why this is correct
+--  Pure f <*> a = fmap f a
+--  Ap a b <*> c = Ap a $ (flip <$> b <*> c)
+  f <*> Pure b = fmap ($ b) f
+  f <*> Ap a b = Ap a ((.) <$> f <*> b)
 
 data Arg a
   = Flag String   (Bool -> a)
