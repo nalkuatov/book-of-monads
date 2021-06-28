@@ -71,3 +71,18 @@ flag a = Ap (Flag a id) (Pure id)
 option :: String -> CommandLine (Maybe String)
 option a = Ap (Option a id) (Pure id)
 
+data Config = Config { background :: Bool
+                     , file       :: String
+                     }
+
+readCommandLine :: CommandLine Config
+readCommandLine =
+  Config <$> flag "background" <*> (maybe "out" id <$> option "file")
+
+argNames :: CommandLine a -> [String]
+argNames (Pure _) = []
+argNames (arg `Ap` rest) = (name arg) : argNames rest
+  where name :: Arg a -> String
+        name (Flag   v _) = "flag " <> v
+        name (Option v _) = "option " <> v
+
